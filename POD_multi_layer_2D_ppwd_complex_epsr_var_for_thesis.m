@@ -16,7 +16,7 @@
  
 % Reference: 
 % "Fast Solution of High Stochastic Dimensional EM Problems Using Proper Orthogonal
-% Decomposition", IEEE Microwave and Wireless components letterrs
+% Decomposition", IEEE Microwave and Wireless components letters
 
 clc
 clear all; % Clear all variables
