@@ -11,9 +11,12 @@
 % Date : 23/09/2018 - implemented in multi layer
 % Date : 14/07/2019 - reduced basis method implementation
 % Date : 04/11/2019 - Extended it for parallel plate waveguide
-% Date : 20/07/2020 - Applied it for lossy dielectric for NE comparision
+% Date : 20/07/2020 -  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  
+% Reference: 
+% "Fast Solution of High Stochastic Dimensional EM Problems Using Proper Orthogonal
+% Decomposition", IEEE Microwave and Wireless components letterrs
 
 clc
 clear all; % Clear all variables
@@ -535,107 +538,16 @@ function_p_2=@(y) (E0^2)*exp(-i*k0*2*X1/100);
 trans_fem=right_Ey_perturb/perform_1D_integration(function_p_2,lower_limit,upper_limit);
 trans_fem_abs_POD =abs(trans_fem);  
 time_elapsed_POD_2D_multilayer=toc;
-save('POD_2D_multilayer_ppwd_waveguide_lossy_dielectric.mat');
-
-
-% Plots
-clear all;
-close all;
-clc;
-load('POD_2D_multilayer_ppwd_waveguide_lossy_dielectric.mat'); 
 [prob_dist_vector_fem_POD, set_of_points_fem_POD ]=ksdensity(mag_gamma_fem_POD);
 figure(1)
 colorstring = 'krbgmwy'; 
-d_1(1)=plot(set_of_points_fem_POD,prob_dist_vector_fem_POD ,'LineWidth',1.5,'Color',colorstring(3));
-%  xlabel('Magnitude of Reflection Coefficient  , $|\Gamma| $ ','fontsize',16,'Interpreter','latex');
-% ylabel('Probability density function  ','fontsize',16,'Interpreter','latex'); 
-hold on;
+plot(set_of_points_fem_POD,prob_dist_vector_fem_POD ,'LineWidth',1.5,'Color',colorstring(3));
+xlabel('Magnitude of Reflection Coefficient  , $|\Gamma| $ ','fontsize',16,'Interpreter','latex');
+ylabel('Probability density function  ','fontsize',16,'Interpreter','latex'); 
+
 [prob_dist_vector_fem_trans_coeff_POD, set_of_points_fem_trans_coeff_POD ]=ksdensity(trans_fem_abs_POD);
 figure(2)
 colorstring ='krbgmwy';
-t_1(1)=plot(set_of_points_fem_trans_coeff_POD,prob_dist_vector_fem_trans_coeff_POD , 'LineWidth',1.5,'Color',colorstring(3));
-%  xlabel('Magnitude of Tranmission Coefficient  , $|T| $ ','fontsize',16,'Interpreter','latex');
-% ylabel('Probability density function  ','fontsize',16,'Interpreter','latex'); 
-hold on;
-%MC
-% File name: MCFEM_ppwd_multilayer_dielectric_var_height_after_2nd_major_rev.m
-load('MC_FEM_TM_mode_ppwd_var_height_multilayer_after_tap_3_pt_9_GHz_after_2nd_major_rev.mat');  
-[prob_dist_vector_fem set_of_points_fem ]=ksdensity(mag_gamma_fem_MC);
-figure(1)
-colorstring = 'krbgmwy'; 
-d_1(2)=plot(set_of_points_fem,prob_dist_vector_fem,'--','LineWidth',2,'Color',colorstring(2));  
-hold on;
-[prob_dist_vector_fem_trans_coeff set_of_points_fem_trans_coeff ]=ksdensity(trans_fem);
-figure(2)
-colorstring ='krbgmwy';
-t_1(2)=plot(set_of_points_fem_trans_coeff,prob_dist_vector_fem_trans_coeff,'--', 'LineWidth',1.5,'Color',colorstring(2));
-hold on;
-% NE
-%File name: NE_ppwd_mutilayer_diel_3rd_order_after_2nd_major_rev.m
-load('Perturb_TM_mode_ppwgd_multilayer_dielectric_third_order_3_pt_9_after_2nd_major_rev.mat');
-figure(1)
-colorstring = 'krbgmwy'; 
-d_1(3)=plot(set_of_points_fem_gamma_perturb_third_order,prob_dist_vector_fem_gamma_perturb_third_order,'-.','LineWidth',1.5,'Color',colorstring(1));
-hold on;
-figure(2)
-colorstring ='krbgmwy';
-t_1(3)=plot(set_of_points_fem_trans_perturb_third_order,prob_dist_vector_fem_trans_perturb_third_order,'-.', 'LineWidth',1.5,'Color',colorstring(1));
-hold on;
-
-% SSFEM_parallel_plate_multilayer_for_POD_comparision.m
-load('SSFEM_parallel_plate_multilayer_dielectric_block_3_pt_9GHz_for_POD.mat');
-[prob_dist_vector_fem_gamma_SSFEM, set_of_points_fem_gamma_SSFEM ]=ksdensity(mag_gamma_fem);  
-[prob_dist_vector_fem_trans_SSFEM ,set_of_points_fem_trans_SSFEM ]=ksdensity(trans_fem_abs); 
-figure(1)
-colorstring = 'krbgmwy';
-d_1(4)=plot(set_of_points_fem_gamma_SSFEM ,prob_dist_vector_fem_gamma_SSFEM,':','LineWidth',1,'Color',colorstring(3));
-l1=legend([d_1(1) d_1(2) d_1(3) d_1(4)],'POD '  ,' MCFEM - 10000  ' ,' NE - 3rd order  ',' SSFEM','fontsize',16,'Interpreter','latex');  
-l1.FontSize=13;
-xlabel('Magnitude of Reflection Coefficient  , $|\Gamma| $ ','fontsize',16,'Interpreter','latex');
-ylabel('Probability density function  ','fontsize',16,'Interpreter','latex'); 
-hold off;
-figure(2)
-colorstring = 'krbgmwy';
-t_1(4)=plot(set_of_points_fem_trans_SSFEM,prob_dist_vector_fem_trans_SSFEM,':','LineWidth',1,'Color',colorstring(3));
-l2=legend([t_1(1) t_1(2) t_1(3) t_1(4)],'POD '  , ' MCFEM - 10000  ',' NE - 3rd order  ',' SSFEM','fontsize',16 ,'Interpreter','latex');
-l2.FontSize=13;
+plot(set_of_points_fem_trans_coeff_POD,prob_dist_vector_fem_trans_coeff_POD , 'LineWidth',1.5,'Color',colorstring(3));
 xlabel('Magnitude of Tranmission Coefficient  , $|T| $ ','fontsize',16,'Interpreter','latex');
 ylabel('Probability density function  ','fontsize',16,'Interpreter','latex'); 
-hold off;
-
-
-% Plots
-figure(3) 
-colorstring = 'krbgmwy'; 
-x_temp=linspace(1,length(sing_values),length(sing_values));
-bar(x_temp,sing_values,'b' ); 
-hold on;
-for ii=1:length(sing_values)
-    t_1(1)=plot(x_temp(ii),sing_values(ii),'o' ,'LineWidth',1,'Color',colorstring(1));
-    hold on;
-end
-l3=legend([t_1(1) ],'Singular values' ,'Interpreter','latex');
-l3.FontSize=14;
-xlabel('Index, $i$ ','fontsize',16,'Interpreter','latex');
-ylabel('Singular values, $\sigma_i$ ','fontsize',16,'Interpreter','latex'); 
-bottomleftcornerXposition=.3;
-bottomleftcornerYposition= .4;
-image_width=.6;
-image_height=.4;
-axes('pos', ...
-    [bottomleftcornerXposition bottomleftcornerYposition ...
-    image_width image_height]);
-imshow('ppwd.jpg');
-
-% Plots
-clear all; 
-load('POD_2D_multilayer_ppwd_waveguide_lossy_dielectric.mat');  
-figure(4)
-%subplot(1,2,1);
-spy(K_mean);
-title('High dimensional matrix','Interpreter','latex');
-figure(5)
-%subplot(1,2,2);
-spy(K_bar);
-title('Low dimensional matrix','Interpreter','latex');
-
